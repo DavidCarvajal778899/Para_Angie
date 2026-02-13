@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Valentine</title>
+
+  <!-- Fuente retro -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Música de fondo -->
+  <audio id="bgm" src="assets/music.mp3" loop></audio>
+
+  <!-- Capa de corazones -->
+  <div id="hearts"></div>
+
+  <main class="card" id="card">
+    <!-- Pantalla 1: inicio -->
+    <section id="screen-start" class="screen">
+      <h1 class="title">PARA MI PRINCESA 💖</h1>
+      <p class="subtitle">Presiona para comenzar</p>
+      <p class="hint">(click / toque / barra espaciadora)</p>
+      <button id="btn-start" class="btn primary">COMENZAR</button>
+    </section>
+
+    <!-- Pantalla 2: frase + sticker -->
+    <section id="screen-phrase" class="screen hidden">
+      <img src="assets/sticker.webp" alt="Sticker animado" class="sticker" />
+      <p class="phrase-text">Antes mi compa y ahora el socio que siempre quise tener… </p>
+      <button id="btn-next" class="btn primary">SIGUIENTE</button>
+    </section>
+
+    <!-- Pantalla 3: frase larga (nueva) -->
+    <section id="screen-letter" class="screen hidden">
+      <p class="letter">
+        Angie, tú eres muy especial para mí eres muy diferente a las demás, me haces estar en un lugar diferente,
+        solo los dos, tranquilos sin que nadie nos moleste<br><br>
+        Según fuentes de por ahí ( mi corazón) eres mi persona favorita ❤️ y sé que ya te dije para salir a comer
+        este sábado pero de igual manera te quería preguntar…
+      </p>
+      <button id="btn-next2" class="btn primary">SIGUIENTE</button>
+    </section>
+
+    <!-- Pantalla 4: pregunta Sí/No -->
+    <section id="screen-question" class="screen hidden">
+      <h2 class="question">¿Quieres ser mi  San Valentín?</h2>
+
+      <div class="buttons">
+        <button id="btn-yes" class="btn yes">SÍ 💚</button>
+        <button id="btn-no" class="btn no">NO 💔</button>
+      </div>
+
+      <p class="mini"><A>Ahí está el no, si no quieres 🙄</A></p>
+    </section>
+
+    <!-- Pantalla 5: final -->
+    <section id="screen-yes" class="screen hidden">
+      <h2 class="success">Sabía que ibas a decir si 💋</h2>
+      <p class="msg">Este sábado a las 9pm 
+                     Tu ponte linda como siempre 🛐</p>
+      <p class="msg2"> ❤️Suerte en tus exámenes linda ❤️</p>
+
+      <button id="btn-restart" class="btn primary">REPETIR</button>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>

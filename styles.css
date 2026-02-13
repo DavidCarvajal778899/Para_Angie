@@ -1,0 +1,164 @@
+:root{
+  --bg1:#ff9a9e;
+  --bg2:#fad0c4;
+  --card:#ffffff;
+  --border:#ff4d6d;
+  --text:#1f1f1f;
+}
+
+*{ box-sizing:border-box; }
+
+body{
+  margin:0;
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background: linear-gradient(135deg, var(--bg1), var(--bg2));
+  font-family: "Press Start 2P", system-ui, sans-serif;
+  color:var(--text);
+  overflow:hidden;
+}
+
+#hearts{
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:0;
+}
+
+.card{
+  position:relative; /* importante para mover NO dentro del cuadrito */
+  z-index:1;
+  width:min(560px, 92vw);
+  background:var(--card);
+  border:5px solid var(--border);
+  border-radius:18px;
+  padding:28px 22px;
+  box-shadow: 0 14px 40px rgba(0,0,0,.18);
+  text-align:center;
+  overflow:hidden; /* por si el NO intenta salirse */
+}
+
+.screen{ display:block; }
+.hidden{ display:none; }
+
+.title{
+  margin:0 0 12px;
+  font-size:22px;
+}
+.subtitle{
+  margin:6px 0 10px;
+  font-size:12px;
+}
+.hint{
+  margin:0 0 18px;
+  font-size:10px;
+  opacity:.75;
+}
+
+.question{
+  margin:6px 0 18px;
+  font-size:14px;
+  line-height:1.5;
+}
+
+.buttons{
+  display:flex;
+  gap:12px;
+  justify-content:center;
+  flex-wrap:wrap;
+  position:relative;
+}
+
+.btn{
+  border:none;
+  border-radius:12px;
+  padding:12px 16px;
+  font-family:inherit;
+  cursor:pointer;
+  font-size:12px;
+  box-shadow: 0 8px 0 rgba(0,0,0,.18);
+  transition: transform .05s ease;
+  user-select:none;
+  touch-action: manipulation;
+}
+
+.btn:active{
+  transform: translateY(2px);
+  box-shadow: 0 6px 0 rgba(0,0,0,.18);
+}
+
+.primary{
+  background:#7c3aed;
+  color:white;
+}
+
+.yes{
+  background:#22c55e;
+  color:white;
+}
+
+.no{
+  background:#ef4444;
+  color:white;
+  position:relative; /* JS lo cambia a absolute al entrar en la pantalla */
+}
+
+.mini{
+  margin-top:14px;
+  font-size:9px;
+  opacity:.75;
+}
+
+.success{
+  margin:6px 0 14px;
+  font-size:14px;
+  line-height:1.5;
+}
+
+.msg, .msg2{
+  font-size:10px;
+  line-height:1.7;
+  margin:8px 0;
+}
+
+.phrase-text{
+  font-size:12px;
+  line-height:1.8;
+  margin:12px 0 18px;
+}
+
+/* Sticker */
+.sticker{
+  width: 160px;
+  max-width: 70%;
+  margin: 6px auto 10px;
+  display:block;
+}
+
+/* Corazones flotando */
+.heart{
+  position:absolute;
+  font-size:16px;
+  animation: floatUp linear forwards;
+  opacity:0.95;
+}
+
+@keyframes floatUp{
+  from{
+    transform: translateY(0) scale(1);
+    opacity:0.95;
+  }
+  to{
+    transform: translateY(-120vh) scale(1.2);
+    opacity:0;
+  }
+}
+
+.letter{
+  font-size:10px;
+  line-height:1.9;
+  margin: 12px 0 18px;
+  text-align: left;
+}
