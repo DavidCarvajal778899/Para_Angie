@@ -164,12 +164,12 @@ body{
 }
 
 .play-area{
-  position: relative;     /* clave: el NO se posiciona relativo a esto */
+  position: relative;
   width: 100%;
-  background: transparent; /* el fondo ya es blanco por la card */
-  min-height: 220px;      /* asegura espacio para moverse */
-  overflow: hidden;       /* nunca se sale visualmente */
+  min-height: 300px;     /* más alto para móviles */
+  overflow: hidden;
 }
+
 
 .buttons{
   position: relative; /* mantiene layout normal del Sí */

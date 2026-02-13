@@ -1,7 +1,5 @@
-const card = document.getElementById("card");
 const bgm = document.getElementById("bgm");
 const playArea = document.getElementById("play-area");
-
 
 const startScreen = document.getElementById("screen-start");
 const phraseScreen = document.getElementById("screen-phrase");
@@ -18,33 +16,42 @@ const btnRestart = document.getElementById("btn-restart");
 
 const heartsLayer = document.getElementById("hearts");
 
-// Arranque desde 3:03 (183 segundos)
+// Música: empezar en 3:03 (183s) SOLO la primera vez que se reproduce
 const START_AT = 183;
+let startedOnceAtOffset = false;
 
-// Intento de autoplay al cargar (en móvil puede fallar)
+/* -------------------- Música -------------------- */
 window.addEventListener("load", () => {
+  // Intento de autoplay (en móvil puede fallar)
   tryPlayMusic();
 });
 
-// Intenta reproducir música
 async function tryPlayMusic() {
   try {
-    bgm.volume = 0.6;             // volumen (0.0 a 1.0)
-    bgm.currentTime = START_AT;  // empieza en 3:03
+    bgm.volume = 0.6;
+
+    // Setear el offset solo una vez (primera reproducción)
+    if (!startedOnceAtOffset) {
+      // Si aún no están los metadatos, este set puede fallar; lo reforzamos abajo con loadedmetadata
+      bgm.currentTime = START_AT;
+      startedOnceAtOffset = true;
+    }
+
     await bgm.play();
-  } catch (e) {
-    // Autoplay bloqueado: se reintentará con interacción del usuario
+  } catch (_) {
+    // Autoplay bloqueado: se reintenta con interacción (COMENZAR)
   }
 }
 
-// FIX para algunos navegadores: esperar metadatos antes de setear el tiempo
+// Refuerzo: cuando ya haya metadatos, fijamos el tiempo si aún no arrancó
 bgm.addEventListener("loadedmetadata", () => {
-  if (bgm.currentTime < START_AT) {
+  if (!startedOnceAtOffset) {
     bgm.currentTime = START_AT;
+    startedOnceAtOffset = true;
   }
 });
 
-
+/* -------------------- Navegación de pantallas -------------------- */
 function show(screen) {
   startScreen.classList.add("hidden");
   phraseScreen.classList.add("hidden");
@@ -54,85 +61,71 @@ function show(screen) {
   screen.classList.remove("hidden");
 }
 
-/* -------- Música: intentar reproducir -------- */
-async function tryPlayMusic() {
-  try {
-    bgm.volume = 0.6;     // ajusta volumen (0.0 a 1.0)
-    await bgm.play();     // puede fallar si no hubo interacción
-  } catch (_) {
-    // Si el navegador bloquea autoplay, no hacemos nada.
-    // Se volverá a intentar en el primer click/toque.
-  }
-}
-
-// Intento apenas abre el link (a veces funciona, a veces no)
-window.addEventListener("load", () => {
-  tryPlayMusic();
-});
-
-/* -------- Pantalla 1 -> Pantalla 2 -------- */
+/* Pantalla 1 -> Pantalla 2 */
 function begin() {
-  tryPlayMusic();  
+  // Primer toque/click permite audio en móvil
+  tryPlayMusic();
   show(phraseScreen);
 }
 
-
-// comenzar: botón, click en pantalla, o space
 btnStart.addEventListener("click", begin);
 startScreen.addEventListener("pointerdown", () => begin());
 window.addEventListener("keydown", (e) => {
   if (e.code === "Space" && !startScreen.classList.contains("hidden")) begin();
 });
 
-/* -------- Pantalla 2 -> Pantalla 3 (nueva) -------- */
+/* Pantalla 2 -> Pantalla 3 */
 btnNext.addEventListener("click", () => {
   show(letterScreen);
   startHearts();
 });
 
-// opcional: tocar en cualquier parte de la pantalla frase avanza
 phraseScreen.addEventListener("pointerdown", (e) => {
   if (e.target.id !== "btn-next") btnNext.click();
 });
 
-/* -------- Pantalla 3 -> Pantalla 4 (Sí/No) -------- */
+/* Pantalla 3 -> Pantalla 4 (Sí/No) */
 btnNext2.addEventListener("click", () => {
   show(questionScreen);
   prepareNoButton();
 });
 
-// opcional: tocar en cualquier parte de la carta avanza
 letterScreen.addEventListener("pointerdown", (e) => {
   if (e.target.id !== "btn-next2") btnNext2.click();
 });
 
-/* -------- Sí -> Pantalla final -------- */
+/* Sí -> Pantalla final */
 btnYes.addEventListener("click", () => {
   show(yesScreen);
 });
 
-/* -------- Reinicio -------- */
+/* Reiniciar */
 function restart() {
-  // reset NO
-  btnNo.style.position = "relative";
-  btnNo.style.left = "";
-  btnNo.style.top = "";
-  btnNo.style.transform = "";
+  resetNoButton();
   show(startScreen);
 }
 btnRestart.addEventListener("click", restart);
 
-/* -------- Botón NO que se escapa dentro del cuadrito -------- */
+/* -------------------- Botón NO (mobile-proof) -------------------- */
 let noReady = false;
 
 function prepareNoButton() {
-  if (!noReady) {
-    btnNo.addEventListener("mouseover", () => moveNoButton());
+  if (!playArea) return; // por si el id no existe aún
 
-    btnNo.addEventListener("touchstart", (e) => {
-      e.preventDefault();
-      moveNoButton();
-    }, { passive: false });
+  if (!noReady) {
+    // PC
+    btnNo.addEventListener("mouseover", () => moveNoButton());
+    btnNo.addEventListener("pointerenter", () => moveNoButton());
+
+    // Móvil
+    btnNo.addEventListener(
+      "touchstart",
+      (e) => {
+        e.preventDefault();
+        moveNoButton();
+      },
+      { passive: false }
+    );
 
     btnNo.addEventListener("pointerdown", (e) => {
       e.preventDefault();
@@ -142,44 +135,55 @@ function prepareNoButton() {
     noReady = true;
   }
 
-  // Ahora el NO se posiciona dentro del play-area
+  // Posición absoluta RELATIVA al playArea
   btnNo.style.position = "absolute";
 
-  // Colócalo inicialmente donde está, pero relativo al play-area
-  const areaRect = playArea.getBoundingClientRect();
-  const btnRect = btnNo.getBoundingClientRect();
+  // Colócalo en un punto seguro dentro del área (no dependemos de getBoundingClientRect)
+  btnNo.style.left = "50%";
+  btnNo.style.top = "140px";
+  btnNo.style.transform = "translateX(-50%)";
 
-  btnNo.style.left = `${btnRect.left - areaRect.left}px`;
-  btnNo.style.top  = `${btnRect.top  - areaRect.top}px`;
-
-  // Primer ajuste seguro
-  moveNoButton();
+  // Un pequeño delay para asegurar medidas correctas (móvil)
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      moveNoButton();
+    });
+  });
 }
 
 function moveNoButton() {
   const padding = 10;
 
-  const areaRect = playArea.getBoundingClientRect();
+  // Tamaño real del contenedor (más estable en móvil que rects)
+  const areaW = playArea.clientWidth;
+  const areaH = playArea.clientHeight;
+
   const btnW = btnNo.offsetWidth;
   const btnH = btnNo.offsetHeight;
 
-  // límites estrictos dentro del área blanca
   const minX = padding;
   const minY = padding;
 
-  const maxX = Math.max(minX, areaRect.width  - btnW - padding);
-  const maxY = Math.max(minY, areaRect.height - btnH - padding);
+  const maxX = Math.max(minX, areaW - btnW - padding);
+  const maxY = Math.max(minY, areaH - btnH - padding);
 
   const x = minX + Math.random() * (maxX - minX);
   const y = minY + Math.random() * (maxY - minY);
 
   btnNo.style.left = `${x}px`;
-  btnNo.style.top  = `${y}px`;
+  btnNo.style.top = `${y}px`;
 
+  // micro animación
   btnNo.style.transform = "scale(1.03)";
   setTimeout(() => (btnNo.style.transform = "scale(1)"), 80);
 }
 
+function resetNoButton() {
+  btnNo.style.position = "relative";
+  btnNo.style.left = "";
+  btnNo.style.top = "";
+  btnNo.style.transform = "";
+}
 
 window.addEventListener("resize", () => {
   if (!questionScreen.classList.contains("hidden") && btnNo.style.position === "absolute") {
@@ -187,8 +191,7 @@ window.addEventListener("resize", () => {
   }
 });
 
-
-/* -------- Corazones flotando -------- */
+/* -------------------- Corazones -------------------- */
 let heartsTimer = null;
 
 function startHearts() {
