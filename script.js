@@ -1,5 +1,7 @@
 const card = document.getElementById("card");
 const bgm = document.getElementById("bgm");
+const playArea = document.getElementById("play-area");
+
 
 const startScreen = document.getElementById("screen-start");
 const phraseScreen = document.getElementById("screen-phrase");
@@ -140,29 +142,33 @@ function prepareNoButton() {
     noReady = true;
   }
 
+  // Ahora el NO se posiciona dentro del play-area
   btnNo.style.position = "absolute";
 
-  const cardRect = card.getBoundingClientRect();
+  // Colócalo inicialmente donde está, pero relativo al play-area
+  const areaRect = playArea.getBoundingClientRect();
   const btnRect = btnNo.getBoundingClientRect();
 
-  btnNo.style.left = `${btnRect.left - cardRect.left}px`;
-  btnNo.style.top  = `${btnRect.top  - cardRect.top}px`;
+  btnNo.style.left = `${btnRect.left - areaRect.left}px`;
+  btnNo.style.top  = `${btnRect.top  - areaRect.top}px`;
 
+  // Primer ajuste seguro
   moveNoButton();
 }
 
 function moveNoButton() {
-  const padding = 12;
+  const padding = 10;
 
-  const cardRect = card.getBoundingClientRect();
+  const areaRect = playArea.getBoundingClientRect();
   const btnW = btnNo.offsetWidth;
   const btnH = btnNo.offsetHeight;
 
+  // límites estrictos dentro del área blanca
   const minX = padding;
   const minY = padding;
 
-  const maxX = Math.max(minX, cardRect.width - btnW - padding);
-  const maxY = Math.max(minY, cardRect.height - btnH - padding);
+  const maxX = Math.max(minX, areaRect.width  - btnW - padding);
+  const maxY = Math.max(minY, areaRect.height - btnH - padding);
 
   const x = minX + Math.random() * (maxX - minX);
   const y = minY + Math.random() * (maxY - minY);
@@ -174,11 +180,13 @@ function moveNoButton() {
   setTimeout(() => (btnNo.style.transform = "scale(1)"), 80);
 }
 
+
 window.addEventListener("resize", () => {
   if (!questionScreen.classList.contains("hidden") && btnNo.style.position === "absolute") {
     moveNoButton();
   }
 });
+
 
 /* -------- Corazones flotando -------- */
 let heartsTimer = null;
